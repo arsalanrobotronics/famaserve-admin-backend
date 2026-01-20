@@ -1,0 +1,46 @@
+[
+    {
+        "_id": "66c739be2f6b6c3c2a1f0003",
+        "title": "Admin",
+        "associatedUsers": 1,
+        "permissions": [
+            "view-dashboard",
+            "view-customers",
+            "manage-customers",
+            "view-trades",
+            "manage-trades",
+            "view-subscriptions",
+            "manage-subscriptions",
+            "view-sub-trades",
+            "manage-sub-trades",
+            "view-projects",
+            "manage-projects",
+            "view-reviews",
+            "manage-reviews"
+        ],
+        "status": "active",
+        "roleTypeId": "67446abf9c1a8c0012a1abcd"
+    },
+    {
+        "_id": "67446abf9c1a8c0012a10003",
+        "title": "Provider",
+        "associatedUsers": 0,
+        "permissions": [
+            "view-dashboard",
+            "system-logs"
+        ],
+        "status": "active",
+        "roleTypeId": "67446abf9c1a8c0012a1abce"
+    },
+    {
+        "_id": "67446abf9c1a8c0012a10002",
+        "title": "Customer",
+        "associatedUsers": 0,
+        "permissions": [
+            "view-dashboard",
+            "system-logs"
+        ],
+        "status": "active",
+        "roleTypeId": "67446abf9c1a8c0012a1abce"
+    }
+]
