@@ -9,6 +9,9 @@ const Authenticate = require("../../middlewares/authenticate");
 /** config_endpoints **/
 // router.get("/getAllConfigurations", Authenticate, ConfigurationController.getAllConfigurations);
 router.get("/getAllCustomersDropdown", Authenticate, ConfigurationController.getCustomersDropdown);
+router.get("/getRolesDropdown", Authenticate, ConfigurationController.getRolesDropdown);
+router.get("/getCategoriesDropdown", Authenticate, ConfigurationController.getCategoriesDropdown);
+router.get("/getPermissionsDropdown", Authenticate, ConfigurationController.getPermissionsDropdown);
 // router.get("/getAllProjectsDropdown", Authenticate, ConfigurationController.getProjectsDropdown);
 
 module.exports = router;

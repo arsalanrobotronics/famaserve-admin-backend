@@ -2,6 +2,7 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const bcrypt = require("bcryptjs");
+const sanitize = require("mongo-sanitize");
 const salt = parseInt(process.env.SALT);
 
 // data_models
@@ -28,12 +29,6 @@ async function getById(request, response) {
   let params = request.params;
 
   try {
-    // Get Customer role
-    const customerRole = await RoleModel.findOne({ title: "Customer" });
-    if (!customerRole) {
-      return sendResponse(response, moduleName, 404, 0, "Customer role not found");
-    }
-
     if (!ObjectId.isValid(params.customerId)) {
       return sendResponse(response, moduleName, 422, 0, "Invalid customer ID format");
     }
@@ -42,7 +37,6 @@ async function getById(request, response) {
       {
         $match: {
           _id: new ObjectId(params.customerId),
-          roleId: customerRole._id,
         },
       },
       {
@@ -113,12 +107,6 @@ async function getAll(request, response) {
   let params = request.query;
 
   try {
-    // Get Customer role
-    const customerRole = await RoleModel.findOne({ title: "Customer" });
-    if (!customerRole) {
-      return sendResponse(response, moduleName, 404, 0, "Customer role not found");
-    }
-
     /** pagination_offset **/
     let page = params.startAt ? parseInt(params.startAt) : 1;
 
@@ -134,41 +122,74 @@ async function getAll(request, response) {
       };
     }
 
-    let $aggregate = [
-      {
+    // Build match conditions for roleId filter
+    let roleIdFilter = null;
+
+    // If role is provided in query params (e.g., role=Provider or role=Customer), filter by it
+    if (params.role) {
+      const roleTitle = sanitize(params.role);
+      
+      // Find role by title (case-insensitive) - try exact match first, then case-insensitive
+      let role = await RoleModel.findOne({ title: roleTitle });
+      
+      if (!role) {
+        // Try case-insensitive match
+        role = await RoleModel.findOne({ 
+          title: { $regex: new RegExp(`^${roleTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, "i") }
+        });
+      }
+      
+      if (!role) {
+        return sendResponse(response, moduleName, 404, 0, `Role "${roleTitle}" not found`);
+      }
+      
+      // Ensure roleIdFilter is a proper ObjectId (role._id should already be ObjectId from Mongoose)
+      roleIdFilter = role._id instanceof ObjectId ? role._id : new ObjectId(role._id);
+    }
+
+    let $aggregate = [];
+
+    // Add roleId filter FIRST if provided (before lookups) - this ensures only records with matching roleId are returned
+    if (roleIdFilter) {
+      $aggregate.push({
         $match: {
-          roleId: customerRole._id,
+          roleId: roleIdFilter,
         },
+      });
+    }
+
+    // Add lookups for role and createdBy details
+    $aggregate.push({
+      $lookup: {
+        from: "roles",
+        localField: "roleId",
+        foreignField: "_id",
+        as: "role",
       },
-      {
-        $lookup: {
-          from: "roles",
-          localField: "roleId",
-          foreignField: "_id",
-          as: "role",
-        },
+    });
+
+    $aggregate.push({
+      $unwind: {
+        path: "$role",
+        preserveNullAndEmptyArrays: true,
       },
-      {
-        $unwind: {
-          path: "$role",
-          preserveNullAndEmptyArrays: true,
-        },
+    });
+
+    $aggregate.push({
+      $lookup: {
+        from: "systemUsers",
+        localField: "createdBy",
+        foreignField: "_id",
+        as: "createdByDetails",
       },
-      {
-        $lookup: {
-          from: "systemUsers",
-          localField: "createdBy",
-          foreignField: "_id",
-          as: "createdByDetails",
-        },
+    });
+
+    $aggregate.push({
+      $unwind: {
+        path: "$createdByDetails",
+        preserveNullAndEmptyArrays: true,
       },
-      {
-        $unwind: {
-          path: "$createdByDetails",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-    ];
+    });
 
     /** apply_status_filter **/
     if (params.status) {

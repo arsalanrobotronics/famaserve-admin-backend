@@ -1,0 +1,107 @@
+[
+    {
+        "title": "View Dashboard",
+        "slug": "view-dashboard",
+        "status": "active"
+    },
+    {
+        "title": "View Providers",
+        "slug": "view-providers",
+        "status": "active"
+    },
+    {
+        "title": "Manage Providers",
+        "slug": "manage-providers",
+        "status": "active"
+    },
+    {
+        "title": "View Users",
+        "slug": "view-users",
+        "status": "active"
+    },
+    {
+        "title": "Manage Users",
+        "slug": "manage-users",
+        "status": "active"
+    },
+    {
+        "title": "View Categories",
+        "slug": "view-categories",
+        "status": "active"
+    },
+    {
+        "title": "Manage Categories",
+        "slug": "manage-categories",
+        "status": "active"
+    },
+    {
+        "title": "View Services",
+        "slug": "view-services",
+        "status": "active"
+    },
+    {
+        "title": "Manage Services",
+        "slug": "manage-services",
+        "status": "active"
+    },
+    {
+        "title": "View Bookings",
+        "slug": "view-bookings",
+        "status": "active"
+    },
+    {
+        "title": "Manage Bookings",
+        "slug": "manage-bookings",
+        "status": "active"
+    },
+    {
+        "title": "View Reviews",
+        "slug": "view-reviews",
+        "status": "active"
+    },
+    {
+        "title": "Manage Reviews",
+        "slug": "manage-reviews",
+        "status": "active"
+    },
+    {
+        "title": "View Notifications",
+        "slug": "view-notifications",
+        "status": "active"
+    },
+    {
+        "title": "Manage Notifications",
+        "slug": "manage-notifications",
+        "status": "active"
+    },
+    {
+        "title": "View Settings",
+        "slug": "view-settings",
+        "status": "active"
+    },
+    {
+        "title": "Manage Settings",
+        "slug": "manage-settings",
+        "status": "active"
+    },
+    {
+        "title": "View Permissions",
+        "slug": "view-permissions",
+        "status": "active"
+    },
+    {
+        "title": "Manage Permissions",
+        "slug": "manage-permissions",
+        "status": "active"
+    },
+    {
+        "title": "View Roles",
+        "slug": "view-roles",
+        "status": "active"
+    },
+    {
+        "title": "Manage Roles",
+        "slug": "manage-roles",
+        "status": "active"
+    }
+]
