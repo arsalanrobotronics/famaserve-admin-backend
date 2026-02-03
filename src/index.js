@@ -33,7 +33,7 @@ const reviewsRoutes = require("./routes/reviews/index");
 const categoriesRoutes = require("./routes/categories/index");
 const servicesRoutes = require("./routes/services/index");
 // server_port_config
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 // environment_validation
 const environment = process.env.ENVIRONMENT?.toUpperCase();
