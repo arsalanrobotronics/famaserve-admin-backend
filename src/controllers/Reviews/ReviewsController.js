@@ -105,6 +105,7 @@ async function getById(request, response) {
           "provider.fullName": 1,
           "provider.email": 1,
           "provider.companyName": 1,
+          "provider.avatar": 1,
           "booking._id": 1,
           "booking.status": 1,
           "booking.scheduleDate": 1,

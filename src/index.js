@@ -32,6 +32,7 @@ const bookingsRoutes = require("./routes/bookings/index");
 const reviewsRoutes = require("./routes/reviews/index");
 const categoriesRoutes = require("./routes/categories/index");
 const servicesRoutes = require("./routes/services/index");
+const providerServicesRoutes = require("./routes/providerservices/index");
 const notificationsRoutes = require("./routes/notifications/index");
 // server_port_config
 const port = process.env.PORT;
@@ -84,6 +85,7 @@ if (environment === "PRODUCTION" && cluster.isMaster) {
   app.use("/reviews/", reviewsRoutes);
   app.use("/categories/", categoriesRoutes);
   app.use("/services/", servicesRoutes);
+  app.use("/providerServices/", providerServicesRoutes);
   app.use("/notifications/", notificationsRoutes);
 
   /** fallback_route_handler **/
