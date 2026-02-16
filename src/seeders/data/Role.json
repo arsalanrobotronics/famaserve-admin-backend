@@ -13,6 +13,8 @@
             "manage-categories",
             "view-services",
             "manage-services",
+            "view-provider-services",
+            "manage-provider-services",
             "view-bookings",
             "manage-bookings",
             "view-reviews",

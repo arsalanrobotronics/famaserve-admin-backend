@@ -3,18 +3,30 @@ const RoleData = require('./data/Role')
 
 async function run() {
     try {
-        await Role.collection.drop()
-        await Role.insertMany(RoleData)
-        console.log('process_22_completed')
+        let added = 0
+        let merged = 0
+        let skipped = 0
+        for (const item of RoleData) {
+            const existing = await Role.findOne({ title: item.title })
+            if (!existing) {
+                await Role.create(item)
+                added++
+            } else {
+                const newPerms = (item.permissions || []).filter(
+                    (p) => !existing.permissions.includes(p)
+                )
+                if (newPerms.length > 0) {
+                    existing.permissions = [...existing.permissions, ...newPerms]
+                    await existing.save()
+                    merged++
+                } else {
+                    skipped++
+                }
+            }
+        }
+        console.log('process_22_completed', { added, merged, skipped })
     } catch (e) {
         console.log('operation_23_error:', e)
-        if (e.code === 26) {
-            console.log('entity_missing:', Role.collection.name)
-            console.log('process_24_completed')
-            await Role.insertMany(RoleData)
-        } else {
-            console.log('operation_25_error:', e)
-        }
     }
 }
 

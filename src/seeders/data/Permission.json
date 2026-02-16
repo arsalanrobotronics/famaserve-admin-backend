@@ -45,6 +45,16 @@
         "status": "active"
     },
     {
+        "title": "View Provider Services",
+        "slug": "view-provider-services",
+        "status": "active"
+    },
+    {
+        "title": "Manage Provider Services",
+        "slug": "manage-provider-services",
+        "status": "active"
+    },
+    {
         "title": "View Bookings",
         "slug": "view-bookings",
         "status": "active"
