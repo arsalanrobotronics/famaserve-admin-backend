@@ -10,7 +10,7 @@ const systemLogsHelper = require("../../helpers/system-logs");
 const { sendResponse } = require("../../helpers/utils");
 
 // module_identifier
-const moduleName = "Bookings";
+const moduleName = "Bookings"; 
 
 module.exports = {
   getById,
