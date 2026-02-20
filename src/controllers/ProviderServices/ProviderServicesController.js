@@ -4,6 +4,7 @@ const ObjectId = mongoose.Types.ObjectId;
 
 // data_models
 const ProviderServiceModel = require("../../models/ProviderService");
+const CustomerModel = require("../../models/Customers");
 
 // utility_functions
 const systemLogsHelper = require("../../helpers/system-logs");
@@ -32,8 +33,17 @@ async function getAll(request, response) {
       };
     }
 
-    const matchStage = { isDeleted: { $ne: true } };
-    if (params.status) matchStage.status = params.status;
+    const matchStage = {};
+    // status filter: active, inactive, archived (status inactive + isDeleted true)
+    if (params.status === "archived") {
+      matchStage.status = "inactive";
+      matchStage.isDeleted = true;
+    } else if (params.status === "inactive") {
+      matchStage.status = "inactive";
+      matchStage.isDeleted = { $ne: true };
+    } else if (params.status === "active") {
+      matchStage.status = "active";
+    }
     if (params.isApproved !== undefined && params.isApproved !== "") {
       matchStage.isApproved = params.isApproved === "true" || params.isApproved === true;
     }
@@ -87,6 +97,7 @@ async function getAll(request, response) {
           priceMax: 1,
           location: 1,
           status: 1,
+          isDeleted: 1,
           isApproved: 1,
           createdAt: 1,
           updatedAt: 1,
@@ -167,7 +178,7 @@ async function update(request, response) {
     return sendResponse(response, moduleName, 422, 0, checkKeys);
   }
 
-  const validStatuses = ["accept", "reject", "inactive"];
+  const validStatuses = ["accept", "reject", "inactive", "active"];
   if (!validStatuses.includes(params.status)) {
     return sendResponse(
       response,
@@ -185,7 +196,6 @@ async function update(request, response) {
 
     let existing = await ProviderServiceModel.findOne({
       _id: new ObjectId(params._id),
-      isDeleted: { $ne: true },
     });
 
     if (!existing) {
@@ -195,10 +205,37 @@ async function update(request, response) {
     if (params.status === "accept") {
       existing.isApproved = true;
       existing.status = "active";
+      existing.isDeleted = false;
     } else if (params.status === "reject") {
       existing.isApproved = false;
+      existing.status = "inactive";
+      existing.isDeleted = true;
     } else if (params.status === "inactive") {
       existing.status = "inactive";
+      existing.isDeleted = true;
+    } else if (params.status === "active") {
+      // Activate: only allowed if associated provider (user) is active
+      const provider = await CustomerModel.findById(existing.providerId).select("status").lean();
+      if (!provider) {
+        return sendResponse(
+          response,
+          moduleName,
+          422,
+          0,
+          "The associated user of that particular service is not available"
+        );
+      }
+      if (provider.status === "archived") {
+        return sendResponse(
+          response,
+          moduleName,
+          422,
+          0,
+          "The associated user of that particular service is not available"
+        );
+      }
+      existing.status = "active";
+      existing.isDeleted = false;
     }
 
     let data = await existing.save();
